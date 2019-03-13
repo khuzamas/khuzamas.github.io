@@ -7,10 +7,13 @@
 */
 var game= []; //two dimensional array representing the game table
 var numOfMines= 10; //number of mines is 10 as a begginer
-var printedTable= [];
 var gameOn= true; //keeps the game going until win or lose
 var table= document.querySelector('table');
-// var tDiv= document.querySelector('.table');
+var minesPlaced= 0; //keep track of the placed mines in the game
+var printedMines=0; //to print the number of mines (changes with showing flags)
+var pressed=0; //keep track of how many empty cells are pressed
+let seconds= 0; //seconds for timer
+
 /*
     --------------------------------------functions--------------------------------------------
 */
@@ -29,31 +32,21 @@ function createTable() {
         game.push(row);
     }
     
-    //for printing only (doesnt show details)
-    //uncomment for DOM
-    
-
+    //building the HTML table
     table.innerHTML= '';
     for (var i= 0; i < game.length; i++) {
         var tr= document.createElement("tr");
         for (var j= 0; j < game[i].length; j++) {
             var td= document.createElement("td");
             
+            //checkered style coloring
             if (i%2==0) {
                 if (j%2==0) {
-                    // td.style.backgroundColor= '#1f369b';
-                    // td.style.backgroundColor= "#0554AB";
-                    // td.style.backgroundColor= "#373F51";
-                    // td.style.backgroundColor= "#FFC02F";
                     td.style.backgroundColor= "#45433F";
                     
                 }
             } else {
                 if (j%2!=0) {
-                    // td.style.backgroundColor= '#1f369b';
-                    // td.style.backgroundColor= "#0554AB";
-                    // td.style.backgroundColor= "#373F51";
-                    // td.style.backgroundColor= "#FFC02F";
                     td.style.backgroundColor= "#45433F";
                 }
             }
@@ -62,25 +55,8 @@ function createTable() {
         }
         table.appendChild(tr);
     }
-
-
-    // for (var i= 0; i < game.length; i++) {
-    //     var tr= document.createElement('div');
-    //     for (var j= 0; j < game[i].length; j++) {
-    //         var td= document.createElement('div');
-    //     }
-    // }
-
-    //uncomment for javaScript
-    // for (var i= 0; i < game.length; i++) {
-    //     var arr= []; //javaScript
-    //     for (var j= 0; j < game[i].length; j++) {
-    //         arr.push(' . ');
-    //     }
-    //     printedTable.push(arr); //javaScript
-    // }
     
-    placeMines();
+    placeMines(); //placing mines after building the table
     console.log(game);
     
 }
@@ -88,13 +64,13 @@ function createTable() {
 /*
     function that places the mines randomly
 */
-var minesPlaced= 0;
-var printedMines=0;
 function placeMines() {
     //placing 10 mines randomly using game indices
     for (var i= 0; minesPlaced < 10; i++) {
-        var r= Math.floor(Math.random() * 9);
-        var c= Math.floor(Math.random() * 9);
+        var r= Math.floor(Math.random() * 9); //random mine row
+        var c= Math.floor(Math.random() * 9); //random mine column
+
+        //make sure it doesn't already have a mine
         if ($(`table tr:eq(${r}) td:eq(${c})`).hasClass('mine')!=true) {
             game[r][c]= true;
             minesPlaced++;
@@ -103,11 +79,12 @@ function placeMines() {
         $(`table tr:eq(${r}) td:eq(${c})`).addClass('mine');
     }
     printedMines= minesPlaced;
-
 }
 
 /*
-    function that places the total number of mines in neighbouring cells of given cell at row and col
+    function that calculates the total number of mines in neighbouring cells of given cell at row and col
+    input: row, col of current cell
+    return: num (var) of nearby mines
 */
 function numOfNearbyMines(row, col) {
     
@@ -157,12 +134,15 @@ function numOfNearbyMines(row, col) {
 }
 
 /*
-    function to excute click action on the table boxes
-    calls mine() or win() or numOfNearbyMines()
+    function to excute click action on the cell, calls mine() or win() or numOfNearbyMines()
+    input: row, col of cell, the cell as object
+    return: mine() if cell containes mine
+            win() if the user pressed all the empty cells
+            numOfNearbyMines() otherwise
 */
-var pressed=0;
 function press(row, col, obj) {
     
+    //make sure it hasn't been clicked yet
     if (obj.hasClass('clicked')==false) {
         pressed++;
         if (game[row][col]) {
@@ -177,16 +157,19 @@ function press(row, col, obj) {
 }
 
 /*
-    function called when a mine is clicked, lose game
+    function called when a mine is clicked, lose game.
+    changes the background image of clicked cell
 */
 function mine(obj) {
-    gameOn= false;
+    gameOn= false; //turn off game
 
-    var img= '/Users/KhuzamShubbar/Desktop/misk/project1/images/old-bomb-starting-to-explode-comic-book-design-vector-16648472-2.jpg';
-    obj.css('background-image', `url(${img}`);
+    //change background image
+    var img= 'https://i.imgur.com/niCxZr7.jpg';
+    obj.css('background-image', `url('${img}'`);
     obj.css('background-repeat', 'no-repeat');
-    obj.css('background-size', 'initial');
+    obj.css('background-size', '');
 
+    //change the background (show) of all the other mine cells
     var arr= document.querySelectorAll('.mine');
     for (var i=0; i < arr.length; i++) {
         arr[i].style.backgroundImage= `url(${img}`;
@@ -194,18 +177,22 @@ function mine(obj) {
         arr[i].style.backgroundSize='initial';
     }
 
-    swal("You Lost!")
+    swal ({
+       title: "You Lost!",
+       font: "MyFirstFont"
+    })
     return 'mine';   
 }
 
 /*
     function called when all boxes are clicked except for the mines, win game
+    removes all elements and shows win image
 */
 function win(obj) {
-    gameOn= false;
+    gameOn= false; //turn off game
+
     var img= "https://previews.123rf.com/images/pashabo/pashabo1707/pashabo170700170/82623932-win-phrase-in-speech-bubble-comic-text-vector-bubble-icon-speech-phrase-comics-book-balloon-halftone.jpg";
     $('table').css('display', 'none');
-    // $('img').attr('src', `url(${img})`);
     $('.img').css('width', '573px');
     $('img').css('display', 'initial');
     $('.left').css('display', 'none');
@@ -215,12 +202,11 @@ function win(obj) {
     return 'win';
 }
 
-let seconds= 0;
-function timer() {
-    // let date = new Date();
 
+function timer() {
+    
+    //increment seconds as long as the game is going (on/true)
     if (gameOn) {
-    // while (seconds < 999) {
         if (seconds < 10) {
             seconds= `00${seconds}`;
         } else if (seconds < 100) {
@@ -230,20 +216,18 @@ function timer() {
         }
         $('.left p').text(seconds);
         seconds++;
-    // }
     }
 
-    
 }
 
 /*
     --------------------------------------main--------------------------------------------
 */
 
-createTable();
-//button: hide button, show table
+createTable(); //create the game array/table
+
+//click event for start game button displays the table
 $('button').on('click', function(){
-    
     $('button').css('display', 'none');
     $('table').css('display', 'table');
     $('.left').css('display', 'initial');
@@ -254,7 +238,7 @@ $('button').on('click', function(){
     
 });
 
-
+//click event for table (left click and right click)
 $('td').mousedown(function(e){
     //left click
     if (e.which == 1) {
@@ -264,19 +248,17 @@ $('td').mousedown(function(e){
     
         if (gameOn) {
             if ($(event.target).attr('class')!='flag') {
-
-                // $(event.target).attr('class', 'clicked');
-                // $(event.target).css('background-color', '#f7f1ad');
                 $(event.target).css('padding', '15px');
 
+                //call press to see the result
                 var result= press(row,col,$(event.target));
                 
+                //as long as the cell does not contain mine or win, set the text to the result (numOfNearbyMines)
                 if (result!='mine' && result!='win') {
-
                     $(event.target).text(result);
-                    
                 }
                
+                //add class clicked to keep track
                 $(event.target).attr('class', 'clicked');
             }
         }
@@ -287,11 +269,12 @@ $('td').mousedown(function(e){
     if (e.which == 3) {
         
         $("td").on("contextmenu", function(event) {
-            event.preventDefault()
+            event.preventDefault(); //prevent the right click menu from showing up
 
             if (gameOn) {
                 if ($(event.target).attr('id')!='clicked') {
 
+                    //toggle the flag and change the printedMines var accordingly
                     if ($(event.target).hasClass('flag')) {
                         $(event.target).removeClass('flag');
                         printedMines++;
@@ -303,87 +286,8 @@ $('td').mousedown(function(e){
                     }
 
                 } 
-                // return false;
             }
         });
   
     }
 });
-
-
-//to-do:
-//finalize table layout/colors
-//timer* on the left
-//num of mines* on the right
-//all zeroes**
-
-function allZeroes(obj) {
-    //traverse through neighbouring cells
-        //click all
-        //if zero
-            //call allzeroes with new cell
-    //return main cell
-    console.log(obj);
-    
-    var rLength= game.length; 
-    var cLength= game[0].length;
-    var row= obj.parent().index();
-    var col= obj.index();
-    console.log(obj, row, col);
-
-    if (col-1 >= 0 && numOfNearbyMines(row,col-1)>=0) {
-        press(row,col-1); 
-        if (numOfNearbyMines(row,col-1)==0) {
-            allZeroes(row,col-1);
-        }
-    } 
-    if (col+1 < cLength && numOfNearbyMines(row,col+1)>=0) {
-        press(row,col+1);
-        if (numOfNearbyMines(row,col+1)==0) {
-            allZeroes(row,col+1);
-        }
-                
-    } 
-    if (row-1 >= 0 &&numOfNearbyMines(row-1,col)>=0) {
-        press(row-1,col);
-        if (numOfNearbyMines(row-1,col)==0) {
-            allZeroes(row-1,col);
-        }
-                
-    } 
-    if (row+1 < rLength &&numOfNearbyMines(row+1,col)>=0) {
-        press(row+1,col);
-        if (numOfNearbyMines(row+1,col)==0) {
-            allZeroes(row+1,col);
-        }
-                
-    } 
-    if (col-1 >= 0 && row -1 >= 0 &&numOfNearbyMines(row-1,col-1)>=0) {
-        press(row-1,col-1);
-        if (numOfNearbyMines(row-1,col-1)==0) {
-            allZeroes(row-1,col-1);
-        }
-                
-    } 
-    if (col-1 >= 0 && row+1 < rLength &&numOfNearbyMines(row+1,col-1)>=0) {
-        press(row+1,col-1);
-        if (numOfNearbyMines(row+1,col-1)==0) {
-            allZeroes(row+1,col-1);
-        }
-                
-    } 
-    if (col+1 < cLength && row -1 >= 0 &&numOfNearbyMines(row-1,col+1)>=0) {
-        press(row-1,col+1);
-        if (numOfNearbyMines(row-1,col+1)==0) {
-            allZeroes(row-1,col+1);
-        }
-                
-    } 
-    if (col+1 < cLength && row + 1 < rLength &&numOfNearbyMines(row+1,col+1)>=0) {
-        press(row+1,col+1);
-        if (numOfNearbyMines(row+1,col+1)==0) {
-            allZeroes(row+1,col+1);
-        }
-    }
-
-}
