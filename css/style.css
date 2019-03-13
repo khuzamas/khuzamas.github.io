@@ -23,6 +23,46 @@ h1 {
     letter-spacing: 3px;
 }
 
+.left {
+    background-color:#fedc3d;
+    border-radius: 10px;
+    margin-top: 250px;
+    margin-right: 25px;
+    height: 50px;
+    width: 100px;
+    display: none;
+
+}
+
+.left p {
+    padding-left: 25px;
+    font-family: "MyFirstFont";
+    color: white;
+    font-size: 30px;
+    margin-top: 13px;
+    letter-spacing: 5px;
+}
+
+.right {
+    background-color:#fedc3d;
+    border-radius: 10px;
+    margin-top: 250px;
+    margin-left: 25px;
+    height: 50px;
+    width: 100px;
+    display: none;
+}
+
+.right p {
+    padding-left: 35px;
+    font-family: "MyFirstFont";
+    color: white;
+    font-size: 30px;
+    margin-top: 13px;
+    letter-spacing: 5px;
+}
+
+
 .button {
     display: flex;
     justify-content: center;
@@ -52,7 +92,6 @@ table {
     justify-content: center;
     border: none;
     table-layout: fixed;
-
     border-spacing: 0px 0px;
 
 }
@@ -64,15 +103,37 @@ tr {
 
 td{
     /* background-color: rgb(124, 170, 255); */
-    background-color:  rgb(51, 117, 204);
+    /* background-color:  rgb(51, 117, 204); LASTEST*/
+    /* background-color: #062E82; */
+    /* background-color: #C3C9E9; */
+    /* background-color: #222E50; */
+    background-color: #33322E;
     padding: 25px;
     font-family: "MyFirstFont";
     color: red;
     margin: 0;
     text-align: center;
     font-size: 20px;
-    table-layout: fixed;
+    /* table-layout: fixed; */
 }
+
+.img {
+    /* width: 573px; */
+}
+
+img {
+    display: none;
+    width: 450px;
+    height: 450px;
+    padding:45px;
+    /* padding-right: 5px; */
+    margin-left: 55px;
+    margin-top: 5px;
+    margin: 20px 95px; 
+    /* margin-right: 170px; */
+    justify-content: center;
+}
+
 
 .flag {
     /* background-color: red; */

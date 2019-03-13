@@ -11,6 +11,7 @@
         src:url("/Users/KhuzamShubbar/Downloads/avengeance/AVENGEANCEHEROICAVENGERAT.ttf");
         }
     </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.7.0/animate.min.css">
     <title>Document</title>
 </head>
 
@@ -27,13 +28,25 @@
     <section class='game'>
 
         <div class= "main">
-            <div class= "button">
-                <button>Start Game</button>
+            <div class= "img">
+                <img class= "animated infinite shake fast"src="https://previews.123rf.com/images/pashabo/pashabo1707/pashabo170700170/82623932-win-phrase-in-speech-bubble-comic-text-vector-bubble-icon-speech-phrase-comics-book-balloon-halftone.jpg" alt="" id="win">
+                <img src="" alt="" id= "lose">
             </div>
-            <table>
-            </table>
 
-            <!-- <div class="table"></div> -->
+            <div class= "left">
+                <p>TIMER</p>
+            </div>
+
+            <div class= "button">
+                <button class="animated infinite pulse">Start Game</button>
+            </div>
+            
+            <table class="animated bounceIn"></table>
+
+            <div class="right">
+                <p>MINES</p>
+            </div>
+
         </div>
     </section>
     
@@ -42,6 +55,7 @@
     
     </footer>
 
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.3.1.js"></script>
     <script src="./js/main.js"></script>
 </body>

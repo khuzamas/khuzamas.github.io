@@ -41,11 +41,20 @@ function createTable() {
             
             if (i%2==0) {
                 if (j%2==0) {
-                    td.style.backgroundColor= '#1f369b';
+                    // td.style.backgroundColor= '#1f369b';
+                    // td.style.backgroundColor= "#0554AB";
+                    // td.style.backgroundColor= "#373F51";
+                    // td.style.backgroundColor= "#FFC02F";
+                    td.style.backgroundColor= "#45433F";
+                    
                 }
             } else {
                 if (j%2!=0) {
-                    td.style.backgroundColor= '#1f369b';  
+                    // td.style.backgroundColor= '#1f369b';
+                    // td.style.backgroundColor= "#0554AB";
+                    // td.style.backgroundColor= "#373F51";
+                    // td.style.backgroundColor= "#FFC02F";
+                    td.style.backgroundColor= "#45433F";
                 }
             }
 
@@ -79,8 +88,9 @@ function createTable() {
 /*
     function that places the mines randomly
 */
+var minesPlaced= 0;
+var printedMines=0;
 function placeMines() {
-    var minesPlaced= 0;
     //placing 10 mines randomly using game indices
     for (var i= 0; minesPlaced < 10; i++) {
         var r= Math.floor(Math.random() * 9);
@@ -92,6 +102,7 @@ function placeMines() {
         
         $(`table tr:eq(${r}) td:eq(${c})`).addClass('mine');
     }
+    printedMines= minesPlaced;
 
 }
 
@@ -151,13 +162,16 @@ function numOfNearbyMines(row, col) {
 */
 var pressed=0;
 function press(row, col, obj) {
-    pressed++;
-    if (game[row][col]) {
-        return mine(obj);
-    } else  if (pressed==71){
-        return win();
-    } else {
-        return numOfNearbyMines(row,col);
+    
+    if (obj.hasClass('clicked')==false) {
+        pressed++;
+        if (game[row][col]) {
+            return mine(obj);
+        } else  if (pressed==(game.length*game.length)-minesPlaced) {
+            return win(obj);
+        } else {
+            return numOfNearbyMines(row,col);
+        }
     }
     
 }
@@ -179,16 +193,47 @@ function mine(obj) {
         arr[i].style.backgroundRepeat= 'no-repeat';
         arr[i].style.backgroundSize='initial';
     }
-    
+
+    swal("You Lost!")
     return 'mine';   
 }
 
 /*
     function called when all boxes are clicked except for the mines, win game
 */
-function win() {
+function win(obj) {
     gameOn= false;
+    var img= "https://previews.123rf.com/images/pashabo/pashabo1707/pashabo170700170/82623932-win-phrase-in-speech-bubble-comic-text-vector-bubble-icon-speech-phrase-comics-book-balloon-halftone.jpg";
+    $('table').css('display', 'none');
+    // $('img').attr('src', `url(${img})`);
+    $('.img').css('width', '573px');
+    $('img').css('display', 'initial');
+    $('.left').css('display', 'none');
+    $('.right').css('display', 'none');
+
+    console.log('win');
     return 'win';
+}
+
+let seconds= 0;
+function timer() {
+    // let date = new Date();
+
+    if (gameOn) {
+    // while (seconds < 999) {
+        if (seconds < 10) {
+            seconds= `00${seconds}`;
+        } else if (seconds < 100) {
+            seconds= `0${seconds}`;
+        } else {
+            seconds= `${seconds}`;
+        }
+        $('.left p').text(seconds);
+        seconds++;
+    // }
+    }
+
+    
 }
 
 /*
@@ -198,8 +243,15 @@ function win() {
 createTable();
 //button: hide button, show table
 $('button').on('click', function(){
+    
     $('button').css('display', 'none');
     $('table').css('display', 'table');
+    $('.left').css('display', 'initial');
+    $('.right').css('display', 'initial');
+    timer();
+    setInterval(timer, 1000);
+    $('.right p').text(minesPlaced);
+    
 });
 
 
@@ -213,8 +265,8 @@ $('td').mousedown(function(e){
         if (gameOn) {
             if ($(event.target).attr('class')!='flag') {
 
-                $(event.target).attr('class', 'clicked');
-                $(event.target).css('background-color', '#f7f1ad');
+                // $(event.target).attr('class', 'clicked');
+                // $(event.target).css('background-color', '#f7f1ad');
                 $(event.target).css('padding', '15px');
 
                 var result= press(row,col,$(event.target));
@@ -225,7 +277,7 @@ $('td').mousedown(function(e){
                     
                 }
                
-
+                $(event.target).attr('class', 'clicked');
             }
         }
   
@@ -242,8 +294,12 @@ $('td').mousedown(function(e){
 
                     if ($(event.target).hasClass('flag')) {
                         $(event.target).removeClass('flag');
+                        printedMines++;
+                        $('.right p').text(printedMines);
                     } else {
                         $(event.target).addClass('flag');
+                        printedMines--;
+                        $('.right p').text(printedMines);
                     }
 
                 } 
@@ -255,13 +311,10 @@ $('td').mousedown(function(e){
 });
 
 
-
-
 //to-do:
-//toggle flag two clicks
-//pressing a full column/row size change
-//timer*
-//num of mines *
+//finalize table layout/colors
+//timer* on the left
+//num of mines* on the right
 //all zeroes**
 
 function allZeroes(obj) {
